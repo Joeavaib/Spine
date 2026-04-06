@@ -17,13 +17,14 @@ class TheSpine(nn.Module):
         self.W_k = nn.Linear(d_state, d_state, bias=False) # Key (from State)
         self.W_v = nn.Linear(d_model, d_state, bias=False) # Value (from Input)
 
-        # Gate MLP erwartet jetzt den Resonanz-Vektor (d_state) als Input
+        # Gate-Mechanik mit dynamischem Schwellenwert tau
         self.gate_mlp = nn.Linear(d_state, 1) 
-        self.gate_bias = nn.Parameter(torch.tensor(-3.0)) 
+        self.W_tau = nn.Linear(d_state, 1) # Erzeugt den dynamischen Widerstand tau_t
         self.skip_gate = nn.Linear(d_model, 1)
 
         # Initialisierung
         nn.init.xavier_uniform_(self.gate_mlp.weight, gain=1.0)
+        nn.init.constant_(self.W_tau.bias, 3.0) # Start-Widerstand (tau ≈ 3.0)
         nn.init.constant_(self.skip_gate.bias, -3.0) 
 
         # 3. Skip-Connection & Norm
@@ -47,9 +48,12 @@ class TheSpine(nn.Module):
         # Elementweise Multiplikation formt den harten Logik-Filter
         R_t = q * k 
         
-        # 3. Gate-Berechnung (Pattern Match auf R_t)
-        # Das Gate entscheidet basierend auf der Resonanz, nicht mehr nur auf x
-        logits = self.gate_mlp(R_t) + self.gate_bias
+        # 3. Dynamisches Schwellenwert-Gating (State-Conditioned)
+        # Widerstand tau wird aus dem Vorwissen h_prev berechnet
+        tau_t = F.softplus(self.W_tau(h_prev))
+        
+        # Gate-Logits minus Schwellenwert
+        logits = self.gate_mlp(R_t) - tau_t
         gate = torch.clamp(logits, min=0.0, max=1.0)
         
         # 4. Synthese (Hadamard Attention Application)

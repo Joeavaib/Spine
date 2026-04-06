@@ -53,7 +53,9 @@ Alle Skripte werden vom Hauptverzeichnis aus gestartet:
 | `h_t` / `h_prev` | Hidden State | Der aktuelle bzw. vorherige Zustand des "Eisernen Speichers". |
 | `W_q`, `W_k`, `W_v` | Hadamard-Projektionen | Query (Input), Key (State), Value (Input) für die Resonanz. |
 | `R_t` | Hadamard-Resonanz | Das Produkt $Q \circ K$, das als logischer Kontext-Filter dient. |
-| `gate` | Gate-Aktivierung | Binäres Signal (0.0 bis 1.0), das entscheidet, ob Information gespeichert wird. |
+| `W_tau` | Schwellenwert-Netz | Berechnet den dynamischen Widerstand $\tau_t$ aus dem Zustand. |
+| `tau_t` | Dynamische Hürde | Zustandsabhängiger Widerstand, der das Gate blockt. |
+| `gate` | Gate-Aktivierung | Binäres Signal (0.0 bis 1.0), resultierend aus $MLP(R_t) - \tau_t$. |
 | `gate_bias` | Gate-Vorspannung | Steuert die Empfindlichkeit des Modells gegenüber Rauschen. |
 | `skip_gate` | Residual-Gate | Reguliert den direkten Signalfluss vom Input zum Output. |
 | `D` | Skip-Parameter | Lernbarer Parameter für die gewichtete Residual-Verbindung. |

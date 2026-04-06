@@ -1,5 +1,8 @@
 import torch
-from spine import TheSpine
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.spine import TheSpine
 
 def run_stability_test():
     d_model = 64
@@ -13,7 +16,7 @@ def run_stability_test():
     
     for i in range(seq_len):
         x = torch.randn(1, d_model)
-        y, h = model(x, h)
+        y, h, _ = model(x, h)
         
         # Check auf Instabilität
         if torch.isnan(y).any() or torch.isnan(h).any():

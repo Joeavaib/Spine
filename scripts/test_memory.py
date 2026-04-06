@@ -1,6 +1,9 @@
 import torch
 import torch.nn.functional as F
-from spine import TheSpine
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.spine import TheSpine
 
 def run_memory_persistence_test():
     d_model = 64
@@ -11,7 +14,7 @@ def run_memory_persistence_test():
     
     # 1. Schritt 0: Den Marker setzen (Alles Einsen)
     marker = torch.ones(1, d_model)
-    _, h_initial = model(marker, None)
+    _, h_initial, _ = model(marker, None)
     
     # Wir speichern den Zustand direkt nach dem Marker als Referenz
     h_reference = h_initial.clone().detach()
@@ -22,7 +25,7 @@ def run_memory_persistence_test():
     h_current = h_initial
     for i in range(1, seq_len):
         noise = torch.randn(1, d_model) * 0.1 # Rauschen mit geringer Amplitude
-        _, h_current = model(noise, h_current)
+        _, h_current, _ = model(noise, h_current)
         
         if i % 10 == 0:
             # Messung der Ähnlichkeit zum ursprünglichen Marker-Zustand

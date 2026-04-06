@@ -32,6 +32,8 @@ Alle Skripte werden vom Hauptverzeichnis aus gestartet:
   Trainiert die Wirbelsäule auf die Rekonstruktion von Informationen nach langen Rausch-Sequenzen.
 - **Phase 2 (Joker-Training):** `python3 scripts/train_phase_2.py`
   Optimiert das Gating-Verhalten für eine noch schärfere Trennung von Nutzsignal und Rauschen.
+- **Vault-Key-Training (Zweiteiliger Schlüssel):** `python3 scripts/train_two_part_key.py`
+  Stresstest für die Hadamard-Attention. Verknüpft zwei zeitlich isolierte Keys über 1000 Schritte Rauschen hinweg.
 
 ### 2. Validierung & Tests
 - **Stabilitätstest:** `python3 scripts/test_spine.py` (Überprüft die numerische Konsistenz).
